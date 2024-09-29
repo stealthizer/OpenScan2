@@ -230,23 +230,27 @@ def take_photo(file):
         
     system(cmd)
     return cmd
-
+    
+# This function generates a set of evenly distributed points on a sphere using a Fibonacci lattice method. Each point is represented in spherical coordinates, converted to degrees. 
 def get_points(samples=1):
-    from math import pi, sqrt, acos, atan2, cos, sin
-
-    points = []
-    phi = pi * (3. - sqrt(5.))
+    from math import pi, sqrt, acos, atan2, cos, sin # Importing necessary math functions
+    points = []  # Create an empty list to store the generated points
+    phi = pi * (3. - sqrt(5.)) # This is the golden angle. It ensures an optimal spread of points
+    # Loop over the number of samples from "0" to "samples-1"
     for i in range(int(samples)):
-        y = 1 - (i / float(samples - 1)) * 2
-        radius = sqrt(1 - y * y)
-        theta = phi * i
-        x = cos(theta) * radius
-        z = sin(theta) * radius
-        r=sqrt(x*x+y*y+z*z)
-        theta_neu=acos(z/r)*180/pi
-        phi_neu=atan2(y,x)*180/pi
-        points.append((theta_neu-90,phi_neu))
-    points.sort()
+        # Calculating the coordinates for each point
+        y = 1 - (i / float(samples - 1)) * 2 # This determines the vertical position (height) of the point on the unit sphere, normalized between -1 and 1
+        radius = sqrt(1 - y * y) # The radius for each point is derived from the height y, ensuring the point lies on the surface of the sphere
+        theta = phi * i #This calculates the azimuthal angle (longitude) in spherical coordinates using the golden angle for optimal spacing
+        x = cos(theta) * radius # The x coordinate is determined using the cos function and the calculated radius
+        z = sin(theta) * radius # The z coordinate is determined using the sin function and the calculated radius
+        # Converting to spherical coordinates
+        r=sqrt(x*x+y*y+z*z) # This calculates the radius r, although it's always 1 because the points are on a unit sphere
+        theta_neu=acos(z/r)*180/pi # The polar angle (colatitude) is calculated in degrees, converted from radians
+        phi_neu=atan2(y,x)*180/pi # The azimuthal angle (longitude) is also converted into degrees
+        # Appending and sorting points
+        points.append((theta_neu-90,phi_neu)) #The point is appended to the list, but the polar angle is adjusted by -90 to center the range around the equator
+    points.sort() # The list of points is sorted
     return points
 
 def create_coordinates(angle_min, angle_max,point_count):
